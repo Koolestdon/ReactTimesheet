@@ -276,9 +276,10 @@ export default class TimesheetWebPart extends React.Component<ITimesheetWebPartP
   private createItem(): void {
     this._onClosePanel();
     this._showDialog("Submitting Request");
+    var totalHours = (parseFloat(this.state.hours ) + this.totalForDay );
 
     var approvalStatus = "Approved";
-    if (parseFloat(this.state.hours + this.totalForDay) <= 8) {
+    if (totalHours <= 8) {
     }
     else {
       approvalStatus ="Pending";
@@ -293,7 +294,7 @@ export default class TimesheetWebPart extends React.Component<ITimesheetWebPartP
       Status: approvalStatus
 
     }).then((iar: ItemAddResult) => {
-      if (parseFloat(this.state.hours + this.totalForDay) <= 8) {
+      if (totalHours <= 8) {
         this.setState({ status: "Your request has been submitted sucessfully " });
       }
       else {
