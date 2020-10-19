@@ -1,8 +1,12 @@
 # react-timesheet
 
 ## Summary
-
-Short summary on functionality and used technologies.
+A client has determined that they need to be able to track time for their employees. The employees
+should be able to access the application and begin adding their activity and submit. A person shouldn’t
+be able to capture more than 8 hours a day. Anything more than 8 hours is flagged as overtime and
+requires manager approval. An implementation of the Approval Workflow is not required.
+When a user arrives on the application, the previous entries for the day should be shown.
+A greeting to the current logged in user should be shown with their Display Name in the message
 
 [picture of the solution in action, if possible]
 
