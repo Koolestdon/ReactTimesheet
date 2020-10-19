@@ -10,6 +10,7 @@ import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 import * as strings from 'TimesheetWebPartWebPartStrings';
 import TimesheetWebPart from './components/TimesheetWebPart';
 import { ITimesheetWebPartProps } from './components/ITimesheetWebPartProps';
+import { ISPList } from './Model/IReactTimesheet';
 
 
 

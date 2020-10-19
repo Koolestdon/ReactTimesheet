@@ -12,9 +12,14 @@ import { Dropdown, IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
 import { Checkbox } from 'office-ui-fabric-react/lib/Checkbox';
 import { Panel, PanelType } from 'office-ui-fabric-react/lib/Panel';
 import { DatePicker } from 'office-ui-fabric-react';
+import { SPHttpClient, SPHttpClientResponse, SPHttpClientConfiguration } from '@microsoft/sp-http';
+import { ISPList } from '../Model/IReactTimesheet';
+require('../styles/custom.css');
 
 
 export default class TimesheetWebPart extends React.Component<ITimesheetWebPartProps, IReactTimesheet> {
+  totalForDay: number;
+
   constructor(props) {
     super(props);
     this.handleDate = this.handleDate.bind(this);
@@ -23,7 +28,10 @@ export default class TimesheetWebPart extends React.Component<ITimesheetWebPartP
     this.handleHours = this.handleHours.bind(this);
     this._onRenderFooterContent = this._onRenderFooterContent.bind(this);
     this.createItem = this.createItem.bind(this);
+    this.getTimesheetItems = this.getTimesheetItems.bind(this);
+    this.totalForDay= 0;
     
+
     this.state = {
       date: new Date(),
       hours: "1",
@@ -38,7 +46,11 @@ export default class TimesheetWebPart extends React.Component<ITimesheetWebPartP
       status: "",
       required: "This is required",
       onSubmission: false
+      
     };
+    
+
+
   }
 
   public render(): React.ReactElement<ITimesheetWebPartProps> {
@@ -48,16 +60,18 @@ export default class TimesheetWebPart extends React.Component<ITimesheetWebPartP
       spfxContext: this.props.context
     });
 
+    this.getTimesheetItems();
+
     return (
 
       <form>
         <div className={styles.timesheetWebPart}>
           <div className={styles.container}>
             <div className={styles.row}>
-            <div className="ms-Grid-col ms-u-sm12 block">
-    <h2 className="ms-Label">Welcome {this.props.userName}, Please complete your timesheet for the day.</h2>
+              <div className="ms-Grid-col ms-u-sm12 block">
+                <h2 className="ms-Label">Welcome {this.props.userName}, Please complete your timesheet for the day.</h2>
               </div>
-            
+
               <div className="ms-Grid-col ms-u-sm12 block">
                 <label className="ms-Label">Date</label>
               </div>
@@ -67,6 +81,9 @@ export default class TimesheetWebPart extends React.Component<ITimesheetWebPartP
                   value={this.state.date}
                   formatDate={this._onFormatDate}
                   isRequired={true}
+                  
+
+
 
                 />
 
@@ -107,7 +124,7 @@ export default class TimesheetWebPart extends React.Component<ITimesheetWebPartP
                 />
               </div>
 
-              <div className="ms-Grid-col ms-u-sm8 block"></div>
+              <div className="ms-Grid-col ms-u-sm7 block"></div>
               <div className="ms-Grid-col ms-u-sm2 block">
                 <PrimaryButton className={styles.button} text="Create" onClick={() => { this.validateForm(); }} />
               </div>
@@ -149,12 +166,16 @@ export default class TimesheetWebPart extends React.Component<ITimesheetWebPartP
           </div>
         </div>
       </form>
+
     );
+
+
   }
 
 
   private handleDate = (date: Date | null | undefined): void => {
     this.setState({ date: date });
+    // this.getTimesheetItems();
   }
 
   private _onFormatDate = (date: Date): string => {
@@ -189,8 +210,10 @@ export default class TimesheetWebPart extends React.Component<ITimesheetWebPartP
 
 
   private handleCategory = (item: IDropdownOption): void => {
+
     console.log('here is the things updating...' + item.key + ' ' + item.text + ' ' + item.selected);
     this.setState({ dpselectedItem: item });
+
   }
 
 
@@ -201,6 +224,7 @@ export default class TimesheetWebPart extends React.Component<ITimesheetWebPartP
   }
 
   private handleDesc(value: string): void {
+
     return this.setState({
       description: value
     });
@@ -220,22 +244,27 @@ export default class TimesheetWebPart extends React.Component<ITimesheetWebPartP
     let allowCreate: boolean = true;
     this.setState({ onSubmission: true });
 
+    if (this.state.dpselectedItem == null) {
+      allowCreate = false;
+      alert("Please provide a category");
+
+    }
+
+    if (parseFloat(this.state.hours) < 0) {
+      allowCreate = false;
+      alert("Invalid hours provided");
+    }
+
     if (this.state.description.length === 0) {
       allowCreate = false;
+      alert("Please provide a description");
     }
-
-    if(parseFloat(this.state.hours) < 0)
-    {
-      allowCreate = false;
-    }
-
 
     if (allowCreate) {
       this._onShowPanel();
     }
     else {
       console.log("do nothing");
-      //this._onShowPanel();
       //do nothing
     }
   }
@@ -247,23 +276,61 @@ export default class TimesheetWebPart extends React.Component<ITimesheetWebPartP
   private createItem(): void {
     this._onClosePanel();
     this._showDialog("Submitting Request");
+
+    var approvalStatus = "Approved";
+    if (parseFloat(this.state.hours + this.totalForDay) <= 8) {
+    }
+    else {
+      approvalStatus ="Pending";
+    }
+
     pnp.sp.web.lists.getByTitle("Timesheet").items.add({
-      Title: this.state.date.toDateString,
+      Title: this.props.userName + " - " + this.state.date.toDateString(),
       Description: this.state.description,
       Category: this.state.dpselectedItem.key,
       Date: this.state.date,
-      Hours: this.state.hours
+      Hours: this.state.hours,
+      Status: approvalStatus
 
     }).then((iar: ItemAddResult) => {
-      if(parseFloat(this.state.hours) <= 8)
-      {
+      if (parseFloat(this.state.hours + this.totalForDay) <= 8) {
         this.setState({ status: "Your request has been submitted sucessfully " });
       }
-      else{
+      else {
         this.setState({ status: "Your request has been submitted for overtime approval. " });
       }
-      
+
     });
+  }
+
+  public
+  private getTimesheetItems(): void {
+
+    var list = pnp.sp.web.lists.getByTitle("Timesheet");
+    var query = '<Where><Eq><FieldRef Name="Date"/><Value Type="DateTime" >' + this.state.date.getFullYear() + "-" + (this.state.date.getMonth() + 1) + '-' + this.state.date.getDate() + '</Value></Eq></Where>';
+    var sumHours = 0;
+    console.log(query);
+
+    this.getItemsByViewQuery("Timesheet", query).then((items: ISPList[]) => {
+      items.forEach((item: ISPList) => {
+        //console.log(item.Id);
+        sumHours += item.Hours;
+      });
+
+      this.totalForDay =sumHours;
+      console.log(sumHours);
+    })
+
+    //this.setState({ totalForDay: sumHours });
+    
+
+  }
+
+  public getItemsByViewQuery(listName: string, query: string): Promise<any> {
+    const xml = '<View><Query>' + query + '</Query></View>';
+    return pnp.sp.web.lists.getByTitle(listName).getItemsByCAMLQuery({ 'ViewXml': xml }).then((res: SPHttpClientResponse) => {
+      return res;
+    })
   }
 
 }
