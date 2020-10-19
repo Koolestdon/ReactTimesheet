@@ -1,8 +1,12 @@
 # react-timesheet
 
 ## Summary
-
-Short summary on functionality and used technologies.
+A client has determined that they need to be able to track time for their employees. The employees
+should be able to access the application and begin adding their activity and submit. A person shouldn’t
+be able to capture more than 8 hours a day. Anything more than 8 hours is flagged as overtime and
+requires manager approval. An implementation of the Approval Workflow is not required.
+When a user arrives on the application, the previous entries for the day should be shown.
+A greeting to the current logged in user should be shown with their Display Name in the message
 
 [picture of the solution in action, if possible]
 
@@ -19,20 +23,29 @@ Short summary on functionality and used technologies.
 
 ## Prerequisites
 
-> Any special pre-requisites?
+> Existing list named "Timesheet"
+
+Column Internal Name|Type
+-------|---
+Description|Multiple lines of text
+Category|Choice
+Date|Date
+Hours|Number
+Status|Choice
 
 ## Solution
 
 Solution|Author(s)
 --------|---------
-folder name | Author details (name, company, twitter alias with link)
+folder name | Kevin Tshiowa
+
+
 
 ## Version history
 
 Version|Date|Comments
 -------|----|--------
-1.1|March 10, 2021|Update comment
-1.0|January 29, 2021|Initial release
+1.0|October 19, 2020|Initial release
 
 ## Disclaimer
 
@@ -48,7 +61,15 @@ Version|Date|Comments
   - **npm install**
   - **gulp serve**
 
-> Include any additional steps as needed.
+or
+
+- Clone this repository
+- in the command line run:
+  - npm install
+  - gulp build
+  - gulp bundle --ship
+  - gulp package-solution --ship
+- Add and Deploy Package to AppCatalog
 
 ## Features
 
@@ -56,9 +77,8 @@ Description of the extension that expands upon high-level summary above.
 
 This extension illustrates the following concepts:
 
-- topic 1
-- topic 2
-- topic 3
+- React
+- PNP
 
 > Notice that better pictures and documentation will increase the sample usage and the value you are providing for others. Thanks for your submissions advance.
 
