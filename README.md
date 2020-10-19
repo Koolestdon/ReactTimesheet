@@ -8,7 +8,9 @@ requires manager approval. An implementation of the Approval Workflow is not req
 When a user arrives on the application, the previous entries for the day should be shown.
 A greeting to the current logged in user should be shown with their Display Name in the message
 
-[picture of the solution in action, if possible]
+![Birthdays Web Part](./assets/timesheet.png)
+
+![Birthdays Web Part](./assets/timesheet-list.png)
 
 ## Used SharePoint Framework Version
 
