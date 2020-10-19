@@ -5,6 +5,7 @@
     max-width: 700px;
     margin: 0px auto;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 25px 50px 0 rgba(0, 0, 0, 0.1);
+    
   }
 
   .row {
@@ -12,6 +13,8 @@
     @include ms-fontColor-white;
     background-color: $ms-color-themeDark;
     padding: 20px;
+    background-color: #a80000;
+    padding: 50px;
   }
 
   .column {
@@ -20,6 +23,12 @@
     @include ms-xl8;
     @include ms-xlPush2;
     @include ms-lgPush1;
+  }
+
+  
+  .fontRed {
+    font-size: 11px;
+    color:#a80000;
   }
 
   .title {
@@ -37,10 +46,16 @@
     @include ms-fontColor-white;
   }
 
+  .hideElement  {
+    display: none;
+  }
+
   .button {
     // Our button
     text-decoration: none;
     height: 32px;
+    margin-top: 20px;;
+    
 
     // Primary Button
     min-width: 80px;
@@ -71,4 +86,17 @@
       display: inline-block;
     }
   }
+
+  .hideElement  {
+    display: none;
+  }
+
+  .hideElementManager  {
+    display: none;
+  }
+
+  .customFont {
+    font-size:11px;
+  }
 }
+

@@ -11,6 +11,8 @@ import * as strings from 'TimesheetWebPartWebPartStrings';
 import TimesheetWebPart from './components/TimesheetWebPart';
 import { ITimesheetWebPartProps } from './components/ITimesheetWebPartProps';
 
+
+
 export interface ITimesheetWebPartWebPartProps {
   description: string;
 }
@@ -21,7 +23,10 @@ export default class TimesheetWebPartWebPart extends BaseClientSideWebPart<ITime
     const element: React.ReactElement<ITimesheetWebPartProps> = React.createElement(
       TimesheetWebPart,
       {
-        description: this.properties.description
+        context: this.context,
+        description: this.properties.description,
+        siteUrl: this.context.pageContext.web.absoluteUrl,
+        userName: this.context.pageContext.user.displayName,
       }
     );
 
